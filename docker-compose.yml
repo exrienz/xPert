@@ -1,0 +1,15 @@
+services:
+  docgen:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      DOCGEN_HOST: 0.0.0.0
+      DOCGEN_PORT: 8080
+      DOCGEN_STORAGE_BACKEND: sqlite
+      DOCGEN_DATA_PATH: /app/data/docgen.sqlite
+      DOCGEN_LLM_PROVIDER: mock
+    volumes:
+      - ./data:/app/data
