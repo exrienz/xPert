@@ -1,6 +1,6 @@
-# DocGen
+# xPert
 
-`docgen` is the target Go application described by `blueprint.md`. It is a modular monolith that keeps planning, generation, review, synthesis, queueing, and storage inside one Go process and one container.
+`xpert` is the target Go application described by `blueprint.md`. It is a modular monolith that keeps planning, generation, review, synthesis, queueing, and storage inside one Go process and one container.
 
 ## Current runtime
 
@@ -14,7 +14,7 @@
 ## Layout
 
 ```text
-docgen/
+xpert/
   cmd/server/main.go
   internal/api/
   internal/orchestrator/
@@ -44,19 +44,45 @@ Default address:
 ## Environment
 
 ```bash
-DOCGEN_HOST=0.0.0.0
-DOCGEN_PORT=8080
-DOCGEN_DATA_PATH=./data/docgen.sqlite
-DOCGEN_STORAGE_BACKEND=sqlite
-DOCGEN_STORAGE_DSN=
-DOCGEN_MAX_PARALLEL_SECTIONS=4
-DOCGEN_MAX_JOB_ATTEMPTS=2
-DOCGEN_DEFAULT_WORD_COUNT=6000
-DOCGEN_LLM_PROVIDER=mock
-DOCGEN_OPENAI_BASE_URL=https://api.openai.com/v1
-DOCGEN_OPENAI_API_KEY=
-DOCGEN_OPENAI_MODEL=gpt-4o-mini
+# Server
+XPERT_HOST=0.0.0.0
+XPERT_PORT=8080
+
+# Storage
+XPERT_DATA_PATH=./data/xpert.sqlite
+XPERT_STORAGE_BACKEND=sqlite
+XPERT_STORAGE_DSN=
+
+# Processing
+XPERT_MAX_PARALLEL_SECTIONS=4
+XPERT_MAX_JOB_ATTEMPTS=2
+XPERT_DEFAULT_WORD_COUNT=6000
+
+# LLM Provider
+XPERT_LLM_PROVIDER=mock
+XPERT_OPENAI_BASE_URL=https://api.openai.com/v1
+XPERT_OPENAI_API_KEY=
+XPERT_OPENAI_MODEL=gpt-4o-mini
+
+# Model Pool (optional)
+XPERT_AI_MODEL_POOL=
+XPERT_ENABLE_RANDOM_MODEL_SELECTION=false
 ```
+
+### Model Pool
+
+When `XPERT_ENABLE_RANDOM_MODEL_SELECTION=true`, the system randomly selects a model from `XPERT_AI_MODEL_POOL` for each LLM request. If a selected model fails, it automatically retries with another model from the pool.
+
+```bash
+# Example: Enable model pool with multiple models
+XPERT_ENABLE_RANDOM_MODEL_SELECTION=true
+XPERT_AI_MODEL_POOL=gpt-4o,gpt-4o-mini,gpt-4-turbo
+```
+
+This provides:
+- Load distribution across multiple models
+- Automatic failover if a model is unavailable
+- Model usage tracking in pipeline traces
 
 ## API
 
@@ -80,5 +106,3 @@ Remaining work for a fuller production build is primarily:
 - native PDF rendering and richer downstream export integrations
 - deeper review and gap-detection logic
 - additional production hardening around provider-specific retries, rate limiting, and observability
-# xPert
-# xPert

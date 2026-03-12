@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"docgen/internal/storage"
+	"xpert/internal/storage"
 )
 
 type SectionPlanner struct{}

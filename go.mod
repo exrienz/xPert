@@ -1,4 +1,4 @@
-module docgen
+module xpert
 
 go 1.22
 

@@ -7,7 +7,7 @@ import (
 )
 
 func TestSQLiteStoreRoundTrip(t *testing.T) {
-	store := NewSQLiteRepository(filepath.Join(t.TempDir(), "docgen.sqlite"))
+	store := NewSQLiteRepository(filepath.Join(t.TempDir(), "xpert.sqlite"))
 	if err := store.Load(); err != nil {
 		t.Fatalf("Load returned error: %v", err)
 	}

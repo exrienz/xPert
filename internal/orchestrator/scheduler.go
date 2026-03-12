@@ -3,7 +3,7 @@ package orchestrator
 import (
 	"sync"
 
-	"docgen/internal/queue"
+	"xpert/internal/queue"
 )
 
 type Scheduler struct {

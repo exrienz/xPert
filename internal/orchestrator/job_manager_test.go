@@ -3,8 +3,8 @@ package orchestrator
 import (
 	"testing"
 
-	"docgen/internal/queue"
-	"docgen/internal/storage"
+	"xpert/internal/queue"
+	"xpert/internal/storage"
 )
 
 func TestNormalizeRequestDefaults(t *testing.T) {

@@ -3,9 +3,9 @@ package api
 import (
 	"net/http"
 
-	"docgen/internal/config"
-	"docgen/internal/orchestrator"
-	"docgen/internal/storage"
+	"xpert/internal/config"
+	"xpert/internal/orchestrator"
+	"xpert/internal/storage"
 )
 
 type Server struct {

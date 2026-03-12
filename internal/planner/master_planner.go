@@ -5,7 +5,7 @@ import (
 	"regexp"
 	"strings"
 
-	"docgen/internal/storage"
+	"xpert/internal/storage"
 )
 
 type MasterPlanner struct{}

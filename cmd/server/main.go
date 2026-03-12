@@ -7,22 +7,34 @@ import (
 	"os/signal"
 	"syscall"
 
-	"docgen/internal/agents"
-	"docgen/internal/api"
-	"docgen/internal/config"
-	"docgen/internal/formatter"
-	"docgen/internal/llm"
-	"docgen/internal/orchestrator"
-	"docgen/internal/planner"
-	"docgen/internal/queue"
-	"docgen/internal/review"
-	"docgen/internal/storage"
-	"docgen/internal/structure"
-	"docgen/internal/synthesis"
+	"xpert/internal/agents"
+	"xpert/internal/api"
+	"xpert/internal/config"
+	"xpert/internal/formatter"
+	"xpert/internal/llm"
+	"xpert/internal/orchestrator"
+	"xpert/internal/planner"
+	"xpert/internal/queue"
+	"xpert/internal/review"
+	"xpert/internal/storage"
+	"xpert/internal/structure"
+	"xpert/internal/synthesis"
 )
 
 func main() {
 	cfg := config.Load()
+
+	// Validate configuration
+	if err := cfg.Validate(); err != nil {
+		log.Fatalf("configuration error: %v", err)
+	}
+
+	// Log model configuration
+	if cfg.EnableRandomModelSelection {
+		log.Printf("random model selection enabled with pool: %v", cfg.AIModelPool)
+	} else {
+		log.Printf("using single model: %s", cfg.OpenAIModel)
+	}
 
 	repo := newStore(cfg)
 	if err := repo.Load(); err != nil {
@@ -30,12 +42,13 @@ func main() {
 	}
 
 	workQueue := queue.NewMemoryQueue(cfg.MaxParallelSections * 4)
+	router := llm.NewRouter(cfg)
 	pipeline := orchestrator.NewPipeline(
 		planner.NewIntentDetector(),
 		planner.NewDocumentClassifier(),
 		planner.NewMasterPlanner(),
 		planner.NewSectionPlanner(),
-		agents.NewExpertAgent(llm.NewRouter(cfg)),
+		agents.NewAgentFactory(router),
 		review.NewReviewer(),
 		review.NewGapDetector(),
 		synthesis.NewSectionSynthesizer(),
@@ -63,7 +76,7 @@ func main() {
 		_ = httpServer.Shutdown(context.Background())
 	}()
 
-	log.Printf("docgen listening on %s", cfg.Address())
+	log.Printf("xPert listening on %s", cfg.Address())
 	if err := httpServer.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 		log.Fatalf("listen: %v", err)
 	}

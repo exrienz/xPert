@@ -1,3 +1,27 @@
+# Python
 .venv/
 __pycache__/
 *.pyc
+
+# Environment
+.env
+.env.local
+
+# Go
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Build artifacts
+/xpert
+/data/*.sqlite

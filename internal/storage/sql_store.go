@@ -22,7 +22,7 @@ type SQLStore struct {
 func NewSQLiteRepository(path string) *SQLStore {
 	dsn := path
 	if strings.TrimSpace(dsn) == "" {
-		dsn = "./data/docgen.sqlite"
+		dsn = "./data/xpert.sqlite"
 	}
 	return &SQLStore{
 		db:      mustOpen("sqlite", dsn),

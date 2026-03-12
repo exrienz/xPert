@@ -61,7 +61,7 @@ func NewOpenAIClient(baseURL, apiKey, model, referer, appTitle string) OpenAICli
 
 func (c OpenAIClient) Generate(systemPrompt, userPrompt string) (string, error) {
 	if strings.TrimSpace(c.apiKey) == "" {
-		return "", fmt.Errorf("llm provider requires DOCGEN_OPENAI_API_KEY")
+		return "", fmt.Errorf("llm provider requires XPERT_OPENAI_API_KEY")
 	}
 	payload, err := json.Marshal(openAIChatRequest{
 		Model: c.model,

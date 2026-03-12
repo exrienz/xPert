@@ -58,6 +58,8 @@ type PipelineTrace struct {
 	StructureChecklist []string          `json:"structure_checklist,omitempty"`
 	Sections           []SectionPlan     `json:"sections"`
 	ReviewSummary      []string          `json:"review_summary"`
+	ModelsUsed         []string          `json:"models_used,omitempty"`
+	ModelFallbacks     int               `json:"model_fallbacks,omitempty"`
 }
 
 type JobRecord struct {

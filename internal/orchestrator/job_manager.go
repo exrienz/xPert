@@ -1,11 +1,12 @@
 package orchestrator
 
 import (
+	"log"
 	"strings"
 	"time"
 
-	"docgen/internal/queue"
-	"docgen/internal/storage"
+	"xpert/internal/queue"
+	"xpert/internal/storage"
 )
 
 type JobManager struct {
@@ -89,9 +90,20 @@ func (m *JobManager) ProcessJob(jobID string) {
 	job.StartedAt = &now
 	job.UpdatedAt = now
 	_ = m.repository.UpdateJob(job)
+	log.Printf("job %s started stage=%s progress=%d attempt=%d/%d", job.ID, job.Stage, job.Progress, job.AttemptCount, job.MaxAttempts)
 
-	markdown, formatted, trace, err := m.pipeline.Run(job.Request)
+	report := func(stage storage.JobStage, progress int) {
+		now := time.Now().UTC()
+		job.Stage = stage
+		job.Progress = progress
+		job.UpdatedAt = now
+		_ = m.repository.UpdateJob(job)
+		log.Printf("job %s stage=%s progress=%d", job.ID, job.Stage, job.Progress)
+	}
+
+	markdown, formatted, trace, err := m.pipeline.Run(job.Request, report)
 	if err != nil {
+		log.Printf("job %s failed: %v", job.ID, err)
 		m.failJob(job, err)
 		return
 	}
@@ -103,6 +115,7 @@ func (m *JobManager) ProcessJob(jobID string) {
 	job.CompletedAt = &completed
 	job.UpdatedAt = completed
 	_ = m.repository.UpdateJob(job)
+	log.Printf("job %s completed", job.ID)
 	_ = m.repository.SaveTrace(job.ID, trace)
 	_ = m.repository.SaveDocument(storage.DocumentRecord{
 		ID:            job.DocumentID,
@@ -126,6 +139,7 @@ func (m *JobManager) failJob(job storage.JobRecord, err error) {
 	now := time.Now().UTC()
 	job.Error = err.Error()
 	job.UpdatedAt = now
+	log.Printf("job %s attempt %d/%d error: %s", job.ID, job.AttemptCount, job.MaxAttempts, job.Error)
 	if job.AttemptCount < job.MaxAttempts {
 		job.Status = storage.JobQueued
 		job.Stage = storage.StagePending

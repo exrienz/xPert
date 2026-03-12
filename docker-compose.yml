@@ -1,15 +1,20 @@
 services:
-  docgen:
+  xpert:
     build:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "8080:8080"
+      - "${XPERT_PORT:-8080}:${XPERT_PORT:-8080}"
     environment:
-      DOCGEN_HOST: 0.0.0.0
-      DOCGEN_PORT: 8080
-      DOCGEN_STORAGE_BACKEND: sqlite
-      DOCGEN_DATA_PATH: /app/data/docgen.sqlite
-      DOCGEN_LLM_PROVIDER: mock
+      XPERT_HOST: ${XPERT_HOST:-0.0.0.0}
+      XPERT_PORT: ${XPERT_PORT:-8080}
+      XPERT_STORAGE_BACKEND: ${XPERT_STORAGE_BACKEND:-sqlite}
+      XPERT_DATA_PATH: /app/data/xpert.sqlite
+      XPERT_LLM_PROVIDER: ${XPERT_LLM_PROVIDER:-mock}
+      XPERT_OPENAI_BASE_URL: ${XPERT_OPENAI_BASE_URL:-https://api.openai.com/v1}
+      XPERT_OPENAI_API_KEY: ${XPERT_OPENAI_API_KEY}
+      XPERT_OPENAI_MODEL: ${XPERT_OPENAI_MODEL}
+      XPERT_ENABLE_RANDOM_MODEL_SELECTION: ${XPERT_ENABLE_RANDOM_MODEL_SELECTION:-false}
+      XPERT_AI_MODEL_POOL: ${XPERT_AI_MODEL_POOL}
     volumes:
       - ./data:/app/data
